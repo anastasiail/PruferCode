@@ -23,7 +23,7 @@ TARGET = prufer_test
 DEBUG_TARGET = prufer_test_debug
 
 # Основная цель по умолчанию
-all: release
+all: test
 
 # Релизная сборка
 release: CFLAGS += $(RELEASE_FLAGS)
@@ -32,6 +32,15 @@ release: $(TARGET)
 # Отладочная сборка
 debug: CFLAGS += $(DEBUG_FLAGS)
 debug: $(DEBUG_TARGET)
+
+# Сборка и запуск тестов
+test: $(TARGET)
+	@echo "=== Запуск тестов ==="
+	./$(TARGET)
+
+test-debug: $(DEBUG_TARGET)
+	@echo "=== Запуск тестов (отладочная версия) ==="
+	./$(DEBUG_TARGET)
 
 # Сборка релизной версии
 $(TARGET): $(OBJ_FILES) $(TEST_OBJ_FILES)
@@ -56,12 +65,9 @@ $(BUILD_DIR):
 clean:
 	rm -rf $(BUILD_DIR) $(TARGET) $(DEBUG_TARGET)
 
-# Запуск тестов
-run: release
-	./$(TARGET)
-
-run-debug: debug
-	./$(DEBUG_TARGET)
+# Запуск тестов (альтернативные команды)
+run: test
+run-debug: test-debug
 
 # Отладочная информация
 info:
@@ -73,12 +79,15 @@ info:
 # Помощь
 help:
 	@echo "Доступные цели:"
-	@echo "  all/release - сборка релизной версии"
-	@echo "  debug       - сборка отладочной версии"
+	@echo "  all         - сборка и запуск тестов (по умолчанию)"
+	@echo "  release     - только сборка релизной версии"
+	@echo "  debug       - только сборка отладочной версии"
+	@echo "  test        - сборка и запуск тестов (релиз)"
+	@echo "  test-debug  - сборка и запуск тестов (отладка)"
 	@echo "  clean       - очистка собранных файлов"
-	@echo "  run         - запуск релизной версии"
-	@echo "  run-debug   - запуск отладочной версии"
+	@echo "  run         - синоним для test"
+	@echo "  run-debug   - синоним для test-debug"
 	@echo "  info        - информация о файлах проекта"
 	@echo "  help        - эта справка"
 
-.PHONY: all release debug clean run run-debug info help
+.PHONY: all release debug test test-debug clean run run-debug info help
